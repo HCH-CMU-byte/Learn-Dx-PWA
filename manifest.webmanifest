@@ -1,0 +1,10 @@
+{
+ "name":"神經科 OSCE 鑑別診斷推理訓練","short_name":"神經OSCE","lang":"zh-Hant",
+ "start_url":"./","scope":"./","display":"standalone",
+ "background_color":"#f4f8f9","theme_color":"#21295c",
+ "icons":[
+  {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},
+  {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png"},
+  {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+ ]
+}

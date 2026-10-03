@@ -1,0 +1,112 @@
+const app=document.getElementById('app');
+const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},
+             set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const getJSON=async u=>{const r=await fetch(u);if(!r.ok)throw new Error(u+' '+r.status);return r.json()};
+let INDEX=null;const CACHE={};
+const FOOT='神經科教學研究部　臨床技能中心　｜　鑑別診斷推理訓練系列';
+
+async function route(){
+  try{
+    INDEX=INDEX||await getJSON('topics/index.json');
+    const id=location.hash.replace(/^#\/?/,'');
+    const meta=INDEX.find(t=>t.id===id&&t.ready);
+    if(!meta)return home();
+    CACHE[id]=CACHE[id]||await getJSON('topics/'+meta.file);
+    topic(CACHE[id],meta);
+  }catch(e){
+    app.innerHTML='<div class="err"><b>無法載入內容。</b><br>請以網址（https）開啟本頁；直接雙擊 index.html 開啟時，瀏覽器會擋住資料檔。<br><small>'+e.message+'</small></div>';
+  }
+  window.scrollTo(0,0);
+}
+
+function home(){
+  document.title='神經科 OSCE 鑑別診斷推理訓練';
+  const ios=/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone&&!matchMedia('(display-mode:standalone)').matches;
+  app.innerHTML=`<header><div class="eyebrow">OSCE 臨床推理訓練</div><h1>神經科鑑別診斷推理訓練</h1>
+    <p class="sub">選擇主題，依序加入線索，觀察鑑別診斷如何浮現與變化。</p></header>
+    ${ios?'<div class="hint">📲 加入主畫面：點 Safari 下方「分享」→「加入主畫面」，之後可像 App 一樣開啟，也能離線使用。</div>':''}
+    <div class="tlist">${INDEX.map(t=>{
+      const n=store.get('done:'+t.id,0);
+      return `<button class="tcard${t.ready?'':' off'}" data-id="${t.id}" ${t.ready?'':'disabled'}>
+        <div class="ts">${t.series?'系列 '+t.series:'敬請期待'}</div><div class="tt">${t.title}</div><div class="td">${t.desc}</div>
+        ${n?`<div class="tn">已完成 ${n} 次練習</div>`:''}</button>`}).join('')}</div>
+    <footer>${FOOT}</footer>`;
+  app.querySelectorAll('.tcard:not(.off)').forEach(b=>b.onclick=()=>{location.hash='#/'+b.dataset.id});
+}
+
+function topic(T,meta){
+  document.title=T.title+'｜OSCE';
+  const S=T.steps,label=Object.fromEntries(S.map(s=>[s.dim,s.label]));
+  let sel={},finished=false;
+  app.innerHTML=`<button class="back" id="back">← 所有主題</button>
+    <header><div class="eyebrow">OSCE 臨床推理訓練　·　互動式鑑別診斷</div><h1>${T.title}</h1><p class="sub">${T.intro}</p></header>
+    <div class="combo"><div class="combo-title">想快速練習不同組合？</div><div class="combo-row" id="combos"></div></div>
+    <div class="topbar"><div class="progress" id="progress"></div><button class="resetBtn" id="reset">重新開始</button></div>
+    <div class="flow" id="flow"></div><footer>${FOOT}　${T.series}</footer>`;
+  const $=id=>document.getElementById(id);
+  const conn=()=>'<div class="connector"></div>';
+  const clue=()=>Object.keys(sel).map(d=>label[d]+'＝'+sel[d]).join('　·　');
+
+  function rank(){
+    const dims=Object.keys(sel);
+    const sc=T.dx.map(dx=>{let score=0,m=[];
+      dims.forEach(d=>{if((dx.match[d]||[]).includes(sel[d])){score+=S.find(s=>s.dim===d).w||1;m.push(label[d])}});
+      return{dx,score,m}});
+    sc.sort((a,b)=>b.score-a.score||(b.dx.red?1:0)-(a.dx.red?1:0));
+    return{top:sc.slice(0,5),total:dims.length};
+  }
+  const card=({dx,m},total)=>`<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ 優先排除　':''}符合 ${m.length}/${total} 項</span></div>
+    <div class="dxmatch">${m.length?'符合：'+m.join('、'):'目前線索尚無直接符合'}</div>
+    <div class="dxmissing"><b>〔還缺〕</b>${dx.missing}</div></div>`;
+
+  function build(){
+    sel={};finished=false;
+    $('flow').innerHTML=S.map((s,i)=>`<div class="step${i?' locked':''}" id="step-${i}">
+      <div class="step-head"><div class="step-num">${i+1}</div><div class="step-title">${s.title}</div><div class="step-picked" id="picked-${i}"></div></div>
+      <div class="opts">${s.options.map((o,j)=>`<button type="button" class="opt" data-i="${i}" data-j="${j}">${o}</button>`).join('')}</div></div>
+      ${conn()}<div class="diffbox" id="diff-${i}" style="display:none"><h3>目前線索下的鑑別診斷</h3><div class="clue" id="clue-${i}"></div>
+      <div class="early" id="early-${i}"></div><div class="dxlist" id="list-${i}"></div></div>${i<S.length-1?conn():''}`).join('')+'<div id="final" style="display:none"></div>';
+    $('flow').querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.i,S[+b.dataset.i].options[+b.dataset.j],b,false));
+    progress();
+  }
+  function pick(i,val,btn,silent){
+    btn.parentNode.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    sel[S[i].dim]=val;
+    $('picked-'+i).textContent='已選：'+val;
+    $('diff-'+i).style.display='block';
+    $('clue-'+i).textContent='已知線索：'+clue();
+    $('early-'+i).textContent=Object.keys(sel).length<3?'※ 線索尚少，排序僅供參考，請繼續補充線索。':'';
+    const r=rank();$('list-'+i).innerHTML=r.top.map(t=>card(t,r.total)).join('');
+    if(i<S.length-1){const n=$('step-'+(i+1));n.classList.remove('locked');if(!silent)n.scrollIntoView({behavior:'smooth',block:'center'})}
+    else final(silent);
+    progress();
+  }
+  function final(silent){
+    const f=$('final'),r=rank();
+    f.className='final';f.style.display='block';
+    f.innerHTML=`<h3>🎯 綜合 ${S.length} 項線索後的最終鑑別</h3><div class="clue">${clue()}</div>
+      <div class="dxlist">${r.top.map(t=>card(t,r.total)).join('')}</div>
+      <div class="teachnote"><b>教學提醒：</b>${T.teachNote}</div>`;
+    if(!silent)f.scrollIntoView({behavior:'smooth',block:'center'});
+    if(!finished){finished=true;store.set('done:'+T.id,store.get('done:'+T.id,0)+1)}
+  }
+  function progress(){$('progress').innerHTML=S.map(s=>`<div class="dot${sel[s.dim]?' done':''}"></div>`).join('')}
+  function apply(vals){
+    build();
+    vals.forEach((v,i)=>{const b=[...$('step-'+i).querySelectorAll('.opt')].find(x=>x.textContent===v);if(b)pick(i,v,b,true)});
+    $('final').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  const row=$('combos');
+  const add=(t,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className='cbtn '+cls;b.textContent=t;b.onclick=fn;row.appendChild(b)};
+  add('🎲 隨機產生組合','rand',()=>apply(S.map(s=>s.options[Math.floor(Math.random()*s.options.length)])));
+  (T.presets||[]).forEach(p=>add(p.label,'',()=>apply(p.vals)));
+  $('back').onclick=()=>{location.hash='#/'};
+  $('reset').onclick=()=>{build();window.scrollTo(0,0)};
+  build();
+}
+
+addEventListener('hashchange',route);
+route();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
