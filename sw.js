@@ -1,5 +1,5 @@
 /* 修改任何檔案內容後，請把版本號 +1，使用者下次開啟就會取得最新版 */
-const V='osce-v2';
+const V='osce-v3';
 const CORE=['./','index.html','style.css','app.js','manifest.webmanifest','topics/index.json',
  'icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{
