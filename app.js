@@ -42,7 +42,8 @@ function topic(T,meta){
     <header><div class="eyebrow">OSCE 臨床推理訓練　·　互動式鑑別診斷</div><h1>${T.title}</h1><p class="sub">${T.intro}</p></header>
     <div class="combo"><div class="combo-title">想快速練習不同組合？</div><div class="combo-row" id="combos"></div></div>
     <div class="topbar"><div class="progress" id="progress"></div><button class="resetBtn" id="reset">重新開始</button></div>
-    <div class="flow" id="flow"></div><footer>${FOOT}　${T.series}</footer>`;
+    <div class="flow" id="flow"></div>
+    <div class="endnav"><button type="button" class="cbtn" id="toTop">↑ 回到頁首</button><button type="button" class="cbtn" id="toList">← 回到主題選單</button></div><footer>${FOOT}　${T.series}</footer>`;
   const $=id=>document.getElementById(id);
   const conn=()=>'<div class="connector"></div>';
   const clue=()=>Object.keys(sel).map(d=>label[d]+'＝'+sel[d]).join('　·　');
@@ -106,12 +107,16 @@ function topic(T,meta){
   const add=(t,cls,fn)=>{const b=document.createElement('button');b.type='button';b.className='cbtn '+cls;b.textContent=t;b.onclick=fn;row.appendChild(b)};
   add('🎲 隨機產生組合','rand',()=>apply(S.map(s=>s.options[Math.floor(Math.random()*s.options.length)])));
   (T.presets||[]).forEach(p=>add(p.label,'',()=>apply(p.vals)));
-  $('back').onclick=()=>{location.hash='#/'};
+  $('back').onclick=$('toList').onclick=()=>{location.hash='#/'};
+  $('toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
   $('reset').onclick=()=>{build();window.scrollTo(0,0)};
   build();
 }
 
 addEventListener('hashchange',route);
 route();
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+  const had=!!navigator.serviceWorker.controller;   // 新版 Service Worker 接手時自動重新載入一次，立即看到新內容
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!window.__r){window.__r=1;location.reload()}});
   addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}

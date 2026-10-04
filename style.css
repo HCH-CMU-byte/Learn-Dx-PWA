@@ -79,3 +79,5 @@ footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .rbar{flex:1;height:10px;border-radius:6px;background:rgba(128,128,128,.25);overflow:hidden}
 .rbar i{display:block;height:100%;border-radius:6px;transition:width .3s}
 .rbar i.r-cerebrum{background:#1c7293}.rbar i.r-brainstem{background:#9a6fd6}.rbar i.r-cerebellum{background:#3fae75}
+.endnav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.endnav .cbtn{min-height:44px;padding:10px 20px;font-size:14px}
