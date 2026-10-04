@@ -7,7 +7,7 @@
 - `manifest.webmanifest`、`sw.js`、`icons/`：PWA 設定
 
 ## 新增主題（例如頭痛）
-1. 複製 `topics/dizziness.json` 為 `topics/headache.json`，改 `steps`（線索與選項）與 `dx`（診斷：`match` 填各線索符合的選項、`red` 標紅旗、`missing` 填〔還缺〕）
+1. 複製 `topics/headache.json`（有原發型／次發型分類與 ICHD-3 欄位 `group`、`ichd`，可省略）為新檔名，改 `steps`（線索與選項）與 `dx`（診斷：`match` 填各線索符合的選項、`red` 標紅旗、`missing` 填〔還缺〕）
 2. 在 `topics/index.json` 把該主題的 `"ready"` 改成 `true`
 3. 執行 `node tools/validate.js` 檢查選項是否拼錯
 4. 把 `sw.js` 的 `V='osce-v1'` 版本號加 1，然後上傳

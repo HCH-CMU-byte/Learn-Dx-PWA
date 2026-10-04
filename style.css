@@ -67,3 +67,15 @@ h1{font-size:clamp(21px,4vw,28px);margin:6px 0 8px;color:var(--title);font-weigh
 .teachnote b{color:#fff}
 footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .err{background:var(--red-bg);border:1px solid var(--red);border-radius:12px;padding:14px;font-size:13.5px;line-height:1.7}
+.gtag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;margin-right:6px;color:#fff;background:var(--accent)}
+.gtag.g-secondary{background:var(--amber)}
+.final .gtag.g-secondary{background:#c9772f}
+.gtag.r-cerebrum{background:#1c7293}.gtag.r-brainstem{background:#6a3fa0}.gtag.r-cerebellum{background:#2e8b57}
+.regions{background:var(--card);border:1px solid rgba(128,128,128,.2);border-radius:11px;padding:10px 13px}
+.final .regions{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)}
+.rtitle{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}.final .rtitle{color:var(--mint)}
+.rrow{display:flex;align-items:center;gap:8px;font-size:13px;margin:5px 0}
+.rname{width:56px;font-weight:700;flex-shrink:0}.rnum{width:32px;text-align:right;font-size:12px;color:var(--muted)}.final .rnum{color:#cfe3e8}
+.rbar{flex:1;height:10px;border-radius:6px;background:rgba(128,128,128,.25);overflow:hidden}
+.rbar i{display:block;height:100%;border-radius:6px;transition:width .3s}
+.rbar i.r-cerebrum{background:#1c7293}.rbar i.r-brainstem{background:#9a6fd6}.rbar i.r-cerebellum{background:#3fae75}

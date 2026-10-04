@@ -28,7 +28,7 @@ function home(){
     <div class="tlist">${INDEX.map(t=>{
       const n=store.get('done:'+t.id,0);
       return `<button class="tcard${t.ready?'':' off'}" data-id="${t.id}" ${t.ready?'':'disabled'}>
-        <div class="ts">${t.series?'系列 '+t.series:'敬請期待'}</div><div class="tt">${t.title}</div><div class="td">${t.desc}</div>
+        <div class="ts">${t.series?'系列 '+t.series:(t.ready?'':'敬請期待')}</div><div class="tt">${t.title}</div><div class="td">${t.desc}</div>
         ${n?`<div class="tn">已完成 ${n} 次練習</div>`:''}</button>`}).join('')}</div>
     <footer>${FOOT}</footer>`;
   app.querySelectorAll('.tcard:not(.off)').forEach(b=>b.onclick=()=>{location.hash='#/'+b.dataset.id});
@@ -53,10 +53,15 @@ function topic(T,meta){
       dims.forEach(d=>{if((dx.match[d]||[]).includes(sel[d])){score+=S.find(s=>s.dim===d).w||1;m.push(label[d])}});
       return{dx,score,m}});
     sc.sort((a,b)=>b.score-a.score||(b.dx.red?1:0)-(a.dx.red?1:0));
-    return{top:sc.slice(0,5),total:dims.length};
+    const n=T.topN||5;let top=sc.slice(0,n);
+    if(T.topN){const pos=top.filter(x=>x.score>0);top=pos.length?pos:top.slice(0,1)}
+    const max=dims.reduce((a,d)=>a+(S.find(s=>s.dim===d).w||1),0);
+    const regions=(T.regions||[]).map(g=>({...g,best:Math.max(0,...sc.filter(x=>x.dx.region===g.id).map(x=>x.score))})).sort((a,b)=>b.best-a.best);
+    return{top,total:dims.length,regions,max};
   }
-  const card=({dx,m},total)=>`<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ 優先排除　':''}符合 ${m.length}/${total} 項</span></div>
-    <div class="dxmatch">${m.length?'符合：'+m.join('、'):'目前線索尚無直接符合'}</div>
+  const regionBox=r=>r.regions.length?`<div class="regions"><div class="rtitle">最可能的病灶區域</div>${r.regions.map((g,i)=>`<div class="rrow"><span class="rname">${g.label}${i===0&&g.best>0&&g.best>r.regions[1].best?' ★':''}</span><span class="rbar"><i class="r-${g.id}" style="width:${Math.round(g.best/r.max*100)}%"></i></span><span class="rnum">${g.best}/${r.max}</span></div>`).join('')}</div>`:'';
+  const card=({dx,m},total)=>`<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ '+(T.redLabel||'優先排除')+'　':''}符合 ${m.length}/${total} 項</span></div>
+    <div class="dxmatch">${dx.group?`<span class="gtag g-${dx.group}">${dx.group==='primary'?'原發型':'次發型'}</span>${dx.ichd||''}　｜　`:''}${dx.tag?`<span class="gtag r-${dx.region}">${dx.tag}</span>${dx.sub||''}　｜　`:''}${m.length?'符合：'+m.join('、'):'目前線索尚無直接符合'}</div>
     <div class="dxmissing"><b>〔還缺〕</b>${dx.missing}</div></div>`;
 
   function build(){
@@ -77,7 +82,7 @@ function topic(T,meta){
     $('diff-'+i).style.display='block';
     $('clue-'+i).textContent='已知線索：'+clue();
     $('early-'+i).textContent=Object.keys(sel).length<3?'※ 線索尚少，排序僅供參考，請繼續補充線索。':'';
-    const r=rank();$('list-'+i).innerHTML=r.top.map(t=>card(t,r.total)).join('');
+    const r=rank();$('list-'+i).innerHTML=regionBox(r)+r.top.map(t=>card(t,r.total)).join('');
     if(i<S.length-1){const n=$('step-'+(i+1));n.classList.remove('locked');if(!silent)n.scrollIntoView({behavior:'smooth',block:'center'})}
     else final(silent);
     progress();
@@ -86,7 +91,7 @@ function topic(T,meta){
     const f=$('final'),r=rank();
     f.className='final';f.style.display='block';
     f.innerHTML=`<h3>🎯 綜合 ${S.length} 項線索後的最終鑑別</h3><div class="clue">${clue()}</div>
-      <div class="dxlist">${r.top.map(t=>card(t,r.total)).join('')}</div>
+      <div class="dxlist">${regionBox(r)}${r.top.map(t=>card(t,r.total)).join('')}</div>
       <div class="teachnote"><b>教學提醒：</b>${T.teachNote}</div>`;
     if(!silent)f.scrollIntoView({behavior:'smooth',block:'center'});
     if(!finished){finished=true;store.set('done:'+T.id,store.get('done:'+T.id,0)+1)}
