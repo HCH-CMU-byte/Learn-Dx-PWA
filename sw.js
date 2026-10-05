@@ -25,3 +25,4 @@ self.addEventListener('fetch',e=>{
     return hit||net;   // 先給快取（離線可用），背景更新
   })());
 });
+//測試，更新狀況不明
