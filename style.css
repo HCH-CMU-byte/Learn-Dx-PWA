@@ -81,3 +81,15 @@ footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .rbar i.r-cerebrum{background:#1c7293}.rbar i.r-brainstem{background:#9a6fd6}.rbar i.r-cerebellum{background:#3fae75}
 .endnav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px}
 .endnav .cbtn{min-height:44px;padding:10px 20px;font-size:14px}
+.xexam{margin:14px 0 4px;border-color:var(--accent);background:var(--accent-bg)}
+.tbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;display:flex;justify-content:space-between;background:var(--navy);color:#fff;padding:9px 16px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:6px}
+.tbar .warn{color:#ffb4b4}
+.logbox{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.logrow{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:9px 12px;font-size:13.5px;line-height:1.55}
+.search{width:100%;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin-bottom:6px}
+.gname{font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 6px}
+.opt:disabled{cursor:default}.opt:disabled:not(.sel){opacity:.45}.opt.sel:disabled{color:#fff}
+.msg{color:var(--red);font-size:13px;text-align:center;margin-top:8px}
+.rs{display:flex;justify-content:space-between;gap:10px}
+.dxcard ul,.teachnote ul{margin:4px 0 0;padding-left:18px;font-size:12.5px;line-height:1.65;font-weight:400}
+.ok{color:#2e8b57;font-weight:700}.bad{color:var(--red);font-weight:700}.final .ok{color:#8fe3b0}.final .bad{color:#ffb4b4}

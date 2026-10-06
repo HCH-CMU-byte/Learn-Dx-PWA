@@ -2,6 +2,7 @@
 
 ## 檔案結構
 - `index.html`／`style.css`／`app.js`：共用外殼（首頁選單、線索流程、計分、結果頁）
+- `exam.js`：OSCE 模擬考（隨機病例、計時、評分與講解）
 - `topics/index.json`：主題清單（`"ready":true` 才會出現並被離線快取）
 - `topics/<主題>.json`：每個主題的線索、鑑別診斷、範例情境、教學提醒
 - `manifest.webmanifest`、`sw.js`、`icons/`：PWA 設定

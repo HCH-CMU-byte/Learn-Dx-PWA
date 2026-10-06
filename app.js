@@ -8,15 +8,21 @@ const FOOT='神經科教學研究部　臨床技能中心　｜　鑑別診斷�
 async function route(){
   try{
     INDEX=INDEX||await getJSON('topics/index.json');
+    stopTimer();
     const id=location.hash.replace(/^#\/?/,'');
+    if(id==='osce')return examMenu();
+    if(id.startsWith('osce/')){
+      let xid=id.slice(5);if(xid==='random')xid=pick1(INDEX.filter(t=>t.ready)).id;
+      const xm=INDEX.find(t=>t.id===xid&&t.ready);if(!xm)return examMenu();
+      CACHE[xid]=CACHE[xid]||await getJSON('topics/'+xm.file);return exam(CACHE[xid],xm);
+    }
     const meta=INDEX.find(t=>t.id===id&&t.ready);
     if(!meta)return home();
     CACHE[id]=CACHE[id]||await getJSON('topics/'+meta.file);
     topic(CACHE[id],meta);
   }catch(e){
     app.innerHTML='<div class="err"><b>無法載入內容。</b><br>請以網址（https）開啟本頁；直接雙擊 index.html 開啟時，瀏覽器會擋住資料檔。<br><small>'+e.message+'</small></div>';
-  }
-  window.scrollTo(0,0);
+  }finally{window.scrollTo(0,0)}
 }
 
 function home(){
@@ -25,13 +31,15 @@ function home(){
   app.innerHTML=`<header><div class="eyebrow">OSCE 臨床推理訓練</div><h1>神經科鑑別診斷推理訓練</h1>
     <p class="sub">選擇主題，依序加入線索，觀察鑑別診斷如何浮現與變化。</p></header>
     ${ios?'<div class="hint">📲 加入主畫面：點 Safari 下方「分享」→「加入主畫面」，之後可像 App 一樣開啟，也能離線使用。</div>':''}
+    <button type="button" class="tcard xexam" id="examBtn"><div class="ts">計時・隨機病例</div><div class="tt">🩺 專科護理師 OSCE 模擬考</div><div class="td">限時問診／檢查，判斷病灶、列出鑑別診斷與下一步計畫，並取得評分與講解</div></button>
     <div class="tlist">${INDEX.map(t=>{
       const n=store.get('done:'+t.id,0);
       return `<button class="tcard${t.ready?'':' off'}" data-id="${t.id}" ${t.ready?'':'disabled'}>
         <div class="ts">${t.series?'系列 '+t.series:(t.ready?'':'敬請期待')}</div><div class="tt">${t.title}</div><div class="td">${t.desc}</div>
         ${n?`<div class="tn">已完成 ${n} 次練習</div>`:''}</button>`}).join('')}</div>
     <footer>${FOOT}</footer>`;
-  app.querySelectorAll('.tcard:not(.off)').forEach(b=>b.onclick=()=>{location.hash='#/'+b.dataset.id});
+  document.getElementById('examBtn').onclick=()=>{location.hash='#/osce'};
+  app.querySelectorAll('.tcard[data-id]:not(.off)').forEach(b=>b.onclick=()=>{location.hash='#/'+b.dataset.id});
 }
 
 function topic(T,meta){

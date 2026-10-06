@@ -1,6 +1,6 @@
 /* 修改任何檔案內容後，請把版本號 +1，使用者下次開啟就會取得最新版 */
-const V='osce-v6';
-const CORE=['./','index.html','style.css','app.js','manifest.webmanifest','topics/index.json',
+const V='osce-v7';
+const CORE=['./','index.html','style.css','app.js','exam.js','manifest.webmanifest','topics/index.json',
  'icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{
   const c=await caches.open(V);
@@ -25,4 +25,3 @@ self.addEventListener('fetch',e=>{
     return hit||net;   // 先給快取（離線可用），背景更新
   })());
 });
-//測試，更新狀況不明
