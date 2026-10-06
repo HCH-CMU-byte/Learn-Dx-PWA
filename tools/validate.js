@@ -10,6 +10,7 @@ for(const t of JSON.parse(fs.readFileSync('topics/index.json','utf8')).filter(t=
       else v.forEach(x=>opt[k].includes(x)||err(`${t.id}/${d.name}: 「${x}」不在 ${k} 的選項中`));}});
   T.steps.forEach(s=>s.options.forEach(o=>T.dx.some(d=>(d.match[s.dim]||[]).includes(o))||err(`${t.id}: 選項「${o}」沒有任何診斷對應`)));
   if(T.regions)T.dx.forEach(d=>T.regions.some(g=>g.id===d.region)||err(`${t.id}/${d.name}: region 不在 regions 清單`));
+  if(T.localize)T.dx.forEach(d=>T.localize.options.some(o=>o.id===d.loc)||err(`${t.id}/${d.name}: loc 不在 localize 選項中`));
   (T.presets||[]).forEach(p=>(p.vals.length!==T.steps.length||p.vals.some((v,i)=>!T.steps[i].options.includes(v)))&&err(`${t.id}: 範例「${p.label}」與選項不符`));
   console.log(`✓ ${t.id}：${T.steps.length} 項線索、${T.dx.length} 個診斷、${(T.presets||[]).length} 個範例`);
 }
