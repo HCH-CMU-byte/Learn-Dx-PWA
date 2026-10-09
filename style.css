@@ -93,3 +93,12 @@ footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .rs{display:flex;justify-content:space-between;gap:10px}
 .dxcard ul,.teachnote ul{margin:4px 0 0;padding-left:18px;font-size:12.5px;line-height:1.65;font-weight:400}
 .ok{color:#2e8b57;font-weight:700}.bad{color:var(--red);font-weight:700}.final .ok{color:#8fe3b0}.final .bad{color:#ffb4b4}
+.fgd{margin-top:6px}.fgd summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--accent);padding:6px 0;min-height:32px}
+.final .fgd summary{color:var(--mint)}
+.fgwrap{background:var(--card);color:var(--ink);border-radius:10px;padding:8px 10px;margin-top:6px}
+.fgwrap svg{width:100%;max-width:300px;display:block;margin:0 auto}
+.fgcap{font-size:12px;line-height:1.6;color:var(--muted)!important;margin-top:4px}
+.fg-line{fill:var(--card);stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.fg-hl{fill:rgba(224,86,106,.62);stroke:#c0392b;stroke-width:1.6}
+.fgwrap .d,.d{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 3}
+.fg-t{fill:var(--muted);font-size:11px;font-family:inherit}

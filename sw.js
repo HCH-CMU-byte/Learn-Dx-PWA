@@ -1,6 +1,6 @@
 /* 修改任何檔案內容後，請把版本號 +1，使用者下次開啟就會取得最新版 */
-const V='osce-v7.0';
-const CORE=['./','index.html','style.css','app.js','exam.js','manifest.webmanifest','topics/index.json',
+const V='osce-v8';
+const CORE=['./','index.html','style.css','app.js','exam.js','figs.js','manifest.webmanifest','topics/index.json',
  'icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{
   const c=await caches.open(V);

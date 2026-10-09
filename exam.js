@@ -22,7 +22,7 @@ function examMenu(){
 function exam(T,meta){
   EXAM_MIN=EXAM_MIN||store.get('examMin',8);
   document.title='OSCE 模擬考｜'+meta.title;
-  const S=T.steps,N=T.dx.length,$=id=>document.getElementById(id),w=d=>S.find(s=>s.dim===d).w||1,ttl=d=>S.find(s=>s.dim===d).title;
+  const S=T.steps,N=T.dx.length,$=id=>document.getElementById(id),w=d=>S.find(s=>s.dim===d).w||1,ttl=d=>S.find(s=>s.dim===d).title,wt=(d,v)=>{const s=S.find(x=>x.dim===d);return (s.w||1)*(s.normal===v?.5:1)};
   const truth=pick1(T.dx),val={};
   S.forEach(s=>{const m=truth.match[s.dim]||[];val[s.dim]=pick1(m.length?m:s.options)});
   const auto=S.filter(s=>s.dim==='age'||s.dim==='sex').map(s=>s.dim),ask=S.filter(s=>!auto.includes(s.dim));
@@ -30,7 +30,7 @@ function exam(T,meta){
   const nMatch=d=>T.dx.filter(x=>(x.match[d]||[]).includes(val[d])).length;
   const spec=Object.fromEntries(ask.map(s=>[s.dim,(1-nMatch(s.dim)/N)*w(s.dim)]));
   const asked=[],loc={v:null},dsel=new Set(),psel=new Set();let left=EXAM_MIN*60,done=false;
-  const sc=(d,dims)=>dims.reduce((a,x)=>a+((d.match[x]||[]).includes(val[x])?w(x):0),0);
+  const sc=(d,dims)=>dims.reduce((a,x)=>a+((d.match[x]||[]).includes(val[x])?wt(x,val[x]):0),0);
   const locLabel=id=>(T.localize.options.find(o=>o.id===id)||{}).label||'未選擇';
   const who=(val.age||'')+(val.sex?(val.sex==='男'?'男性':'女性'):'')||'成人病人';
   app.innerHTML=`<div class="tbar"><span id="clock"></span><span id="quota"></span></div>
@@ -120,7 +120,7 @@ function exam(T,meta){
     if(timeup)sugg.push('時間到時以目前已填內容評分，建議先完成各項作答再回頭精修。');
     $('stage').innerHTML=`<div class="final"><h3>🎯 成績 ${total}／100　${grade}</h3>
      <div class="clue">正確答案：<b>${truth.name}</b>　${timeup?'⏰ 時間到，自動送出':''}<br>完整線索：${S.map(s=>`${s.label}＝${val[s.dim]}${auto.includes(s.dim)||asked.includes(s.dim)?'':'（未詢問）'}`).join('；')}</div>
-     <div class="dxlist">${row('資訊蒐集',pI,25,li(infoL))}${row('病灶區域',pL,20,li(locL))}${row('鑑別診斷',pD,35,li(dL)+li(dN))}${row('下一步計畫',pP,20,li(pn.length?pn:['計畫與風險等級相符。']))}</div>
+     <div class="dxlist">${row('資訊蒐集',pI,25,li(infoL))}${row('病灶區域',pL,20,li(locL)+(truth.fig?figBlock(truth.fig):''))}${row('鑑別診斷',pD,35,li(dL)+li(dN))}${row('下一步計畫',pP,20,li(pn.length?pn:['計畫與風險等級相符。']))}</div>
      ${sugg.length?`<div class="teachnote"><b>改進建議</b>${li(sugg)}</div>`:''}
      <div class="teachnote"><b>教學提醒：</b>${T.teachNote}</div>
      <div class="endnav"><button type="button" class="cbtn rand" id="again">🎲 再來一題</button><button type="button" class="cbtn" id="menu">← 回模擬考選單</button></div></div>`;
