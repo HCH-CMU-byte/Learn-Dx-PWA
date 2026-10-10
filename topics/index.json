@@ -4,7 +4,7 @@
   "file": "dizziness.json",
   "ready": true,
   "title": "頭暈",
-  "series": "01",
+  "series": "01 / 04",
   "desc": "5 項線索：年齡、性別、頭暈型態、時間樣態、伴隨症狀"
  },
  {
@@ -12,7 +12,7 @@
   "file": "weakness.json",
   "ready": true,
   "title": "急性無力",
-  "series": "02",
+  "series": "02 / 04",
   "desc": "4 項線索：年齡、性別、無力形態、伴隨症狀（含範例情境）"
  },
  {
@@ -20,7 +20,7 @@
   "file": "headache.json",
   "ready": true,
   "title": "頭痛",
-  "series": "03",
+  "series": "03 / 04",
   "desc": "5 項線索：年齡、性別、起病病程、疼痛特徵、伴隨症狀（原發型／次發型，含範例情境）"
  },
  {
