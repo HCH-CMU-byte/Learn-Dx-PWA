@@ -68,7 +68,7 @@ function topic(T,meta){
     const regions=(T.regions||[]).map(g=>({...g,best:Math.max(0,...sc.filter(x=>x.dx.region===g.id).map(x=>x.score))})).sort((a,b)=>b.best-a.best);
     return{top,total:dims.length,regions,max};
   }
-  const regionBox=r=>r.regions.length?`<div class="regions"><div class="rtitle">最可能的病灶區域</div>${r.regions.map((g,i)=>`<div class="rrow"><span class="rname">${g.label}${i===0&&g.best>0&&g.best>r.regions[1].best?' ★':''}</span><span class="rbar"><i class="r-${g.id}" style="width:${Math.round(g.best/r.max*100)}%"></i></span><span class="rnum">${+g.best.toFixed(1)}/${r.max}</span></div>`).join('')}</div>`:'';
+  const regionBox=r=>r.regions.length?`<div class="regions"><div class="rtitle">${T.regionTitle||'最可能的病灶區域'}</div>${r.regions.map((g,i)=>`<div class="rrow"><span class="rname">${g.label}${i===0&&g.best>0&&g.best>r.regions[1].best?' ★':''}</span><span class="rbar"><i class="r-${g.id}" style="width:${Math.round(g.best/r.max*100)}%"></i></span><span class="rnum">${+g.best.toFixed(1)}/${r.max}</span></div>`).join('')}</div>`:'';
   const card=({dx,m},total)=>`<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ '+(T.redLabel||'優先排除')+'　':''}符合 ${m.length}/${total} 項</span></div>
     <div class="dxmatch">${dx.group?`<span class="gtag g-${dx.group}">${dx.group==='primary'?'原發型':'次發型'}</span>${dx.ichd||''}　｜　`:''}${dx.tag?`<span class="gtag r-${dx.region}">${dx.tag}</span>${dx.sub||''}　｜　`:''}${m.length?'符合：'+m.join('、'):'目前線索尚無直接符合'}</div>
     <div class="dxmissing"><b>〔還缺〕</b>${dx.missing}</div>${dx.fig?figDetails(dx.fig):''}</div>`;
