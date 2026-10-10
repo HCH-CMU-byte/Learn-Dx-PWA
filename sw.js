@@ -7,7 +7,7 @@ self.addEventListener('install',e=>e.waitUntil((async()=>{
   const fresh=urls=>Promise.all(urls.map(async u=>{const r=await fetch(u,{cache:'reload'});   // 略過瀏覽器 HTTP 快取，確保拿到伺服器最新檔
     if(!r.ok)throw new Error(u);await c.put(u,r)}));
   await fresh(CORE);
-  const idx=await (await fetch('topics/index.json',{cache:'reload'})).json();   // 新增主題時不必改這裡
+  const idx=await (await fetch('topics/index.json',{cache:'reload'})).json();   // 新增主題時不必改這裡 
   await fresh(idx.filter(t=>t.ready).map(t=>'topics/'+t.file));
   self.skipWaiting();
 })()));
