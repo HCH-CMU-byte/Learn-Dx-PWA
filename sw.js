@@ -22,6 +22,6 @@ self.addEventListener('fetch',e=>{
     const hit=await caches.match(r,{ignoreSearch:true});
     const net=fetch(r.url,{cache:'no-cache'}).then(res=>{if(res.ok)caches.open(V).then(c=>c.put(r,res.clone()));return res})
       .catch(()=>hit||(r.mode==='navigate'?caches.match('index.html'):Response.error()));
-    return hit||net;   // 先給快取（離線可用），背景更新
+    return hit||net;   // 先給快取（離線可用），背景更新 
   })());
 });
