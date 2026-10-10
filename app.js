@@ -57,21 +57,30 @@ function topic(T,meta){
   const clue=()=>Object.keys(sel).map(d=>label[d]+'＝'+sel[d]).join('　·　');
 
   function rank(){
-    const dims=Object.keys(sel);
-    const sc=T.dx.map(dx=>{let score=0,m=[];
-      dims.forEach(d=>{if((dx.match[d]||[]).includes(sel[d])){const st=S.find(s=>s.dim===d);score+=(st.w||1)*(st.normal===sel[d]?0.5:1);m.push(label[d])}});
-      return{dx,score,m}});
+    const dims=Object.keys(sel),isN=d=>S.find(s=>s.dim===d).normal===sel[d];
+    let sc=T.dx.map(dx=>{let score=0,m=[],nn=0;
+      dims.forEach(d=>{if((dx.match[d]||[]).includes(sel[d])){const st=S.find(s=>s.dim===d),nrm=st.normal===sel[d];score+=(st.w||1)*(nrm?0.5:1);if(nrm)nn++;else m.push(label[d])}});
+      return{dx,score,m,nn}});
+    let both=false;
+    if(T.limb){const inv=k=>T.limb[k].some(d=>d in sel&&!isN(d)),up=inv('upper'),lo=inv('lower');
+      if(up&&!lo)sc=sc.filter(x=>x.dx.limb==='upper');else if(lo&&!up)sc=sc.filter(x=>x.dx.limb==='lower');else both=up&&lo}
     sc.sort((a,b)=>b.score-a.score||(b.dx.red?1:0)-(a.dx.red?1:0));
     const n=T.topN||5;let top=sc.slice(0,n);
+    if(both){const pk=[sc.find(x=>x.dx.limb==='upper'),sc.find(x=>x.dx.limb==='lower')].filter(Boolean);
+      top=[...pk,...sc.filter(x=>!pk.includes(x))].slice(0,n).sort((a,b)=>b.score-a.score)}
     if(T.topN){const pos=top.filter(x=>x.score>0);top=pos.length?pos:top.slice(0,1)}
     const max=dims.reduce((a,d)=>a+(S.find(s=>s.dim===d).w||1),0);
     const regions=(T.regions||[]).map(g=>({...g,best:Math.max(0,...sc.filter(x=>x.dx.region===g.id).map(x=>x.score))})).sort((a,b)=>b.best-a.best);
-    return{top,total:dims.length,regions,max};
+    return{top,total:dims.length,regions,max,both};
   }
   const regionBox=r=>r.regions.length?`<div class="regions"><div class="rtitle">${T.regionTitle||'最可能的病灶區域'}</div>${r.regions.map((g,i)=>`<div class="rrow"><span class="rname">${g.label}${i===0&&g.best>0&&g.best>r.regions[1].best?' ★':''}</span><span class="rbar"><i class="r-${g.id}" style="width:${Math.round(g.best/r.max*100)}%"></i></span><span class="rnum">${+g.best.toFixed(1)}/${r.max}</span></div>`).join('')}</div>`:'';
-  const card=({dx,m},total)=>`<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ '+(T.redLabel||'優先排除')+'　':''}符合 ${m.length}/${total} 項</span></div>
-    <div class="dxmatch">${dx.group?`<span class="gtag g-${dx.group}">${dx.group==='primary'?'原發型':'次發型'}</span>${dx.ichd||''}　｜　`:''}${dx.tag?`<span class="gtag r-${dx.region}">${dx.tag}</span>${dx.sub||''}　｜　`:''}${m.length?'符合：'+m.join('、'):'目前線索尚無直接符合'}</div>
-    <div class="dxmissing"><b>〔還缺〕</b>${dx.missing}</div>${dx.fig?figDetails(dx.fig):''}</div>`;
+  const hasN=S.some(s=>s.normal);
+  const card=({dx,m,nn},total)=>{
+    const head=hasN?`符合 ${m.length} 項異常發現`:`符合 ${m.length}/${total} 項`;
+    const mt=m.length?'符合：'+m.join('、')+(hasN&&nn?`（另有 ${nn} 項正常表現相符）`:''):(hasN&&nn?'異常發現尚無直接相符，僅正常表現相符':'目前線索尚無直接符合');
+    return `<div class="dxcard${dx.red?' flag':''}"><div class="dxname">${dx.name}<span class="badge">${dx.red?'⚠ '+(T.redLabel||'優先排除')+'　':''}${head}</span></div>
+    <div class="dxmatch">${dx.group?`<span class="gtag g-${dx.group}">${dx.group==='primary'?'原發型':'次發型'}</span>${dx.ichd||''}　｜　`:''}${dx.tag?`<span class="gtag r-${dx.region}">${dx.tag}</span>${dx.sub||''}　｜　`:''}${mt}</div>
+    <div class="dxmissing"><b>〔還缺〕</b>${dx.missing}</div>${dx.fig?figDetails(dx.fig):''}</div>`};
 
   function build(){
     sel={};finished=false;

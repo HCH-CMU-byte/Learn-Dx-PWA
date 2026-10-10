@@ -102,3 +102,7 @@ footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .fg-hl{fill:rgba(224,86,106,.62);stroke:#c0392b;stroke-width:1.6}
 .fgwrap .d,.d{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 3}
 .fg-t{fill:var(--muted);font-size:11px;font-family:inherit}
+.rbar i{background:var(--accent)}
+.rbar i.r-entrap{background:#e08a2e}.rbar i.r-root{background:#1c7293}.rbar i.r-plexus{background:#9a6fd6}
+.gtag.r-entrap{background:#c9772f}.gtag.r-root{background:#1c7293}.gtag.r-plexus{background:#6a3fa0}
+.rname{width:72px;white-space:nowrap}

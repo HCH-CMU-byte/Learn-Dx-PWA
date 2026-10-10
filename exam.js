@@ -69,7 +69,10 @@ function exam(T,meta){
   function finish(timeup){
     if(done)return;done=true;stopTimer();
     const rev=[...auto,...asked],full=S.map(s=>s.dim);
-    const rs=T.dx.map(d=>({d,s:sc(d,rev)})).sort((a,b)=>b.s-a.s||(b.d.red?1:0)-(a.d.red?1:0));
+    let rs0=T.dx.map(d=>({d,s:sc(d,rev)}));
+    if(T.limb){const inv=k=>T.limb[k].some(x=>rev.includes(x)&&val[x]!==S.find(q=>q.dim===x).normal),up=inv('upper'),lo=inv('lower');
+      if(up&&!lo)rs0=rs0.filter(x=>x.d.limb==='upper');else if(lo&&!up)rs0=rs0.filter(x=>x.d.limb==='lower')}
+    const rs=rs0.sort((a,b)=>b.s-a.s||(b.d.red?1:0)-(a.d.red?1:0));
     const thr=rs[Math.min(5,rs.length-1)].s,plaus=new Set(rs.filter(x=>x.s>=thr&&x.s>0).map(x=>x.d)),top5=rs.slice(0,5).map(x=>x.d);
     const tf=sc(truth,full),eq=d=>d!==truth&&sc(d,full)>=tf;
     // 資訊蒐集 25
