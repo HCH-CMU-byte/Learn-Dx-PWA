@@ -106,3 +106,9 @@ footer{text-align:center;margin-top:28px;color:var(--muted);font-size:12px}
 .rbar i.r-entrap{background:#e08a2e}.rbar i.r-root{background:#1c7293}.rbar i.r-plexus{background:#9a6fd6}
 .gtag.r-entrap{background:#c9772f}.gtag.r-root{background:#1c7293}.gtag.r-plexus{background:#6a3fa0}
 .rname{width:72px;white-space:nowrap}
+.rbar i.r-degen{background:#1c7293}.gtag.r-degen{background:#1c7293}
+.rbar i.r-bg{background:#9a6fd6}.gtag.r-bg{background:#9a6fd6}
+.rbar i.r-circuit{background:#3fae75}.gtag.r-circuit{background:#3fae75}
+.rbar i.r-struct{background:#e08a2e}.gtag.r-struct{background:#e08a2e}
+.rbar i.r-tox{background:#c9453f}.gtag.r-tox{background:#c9453f}
+.rbar i.r-func{background:#7b8794}.gtag.r-func{background:#7b8794}
